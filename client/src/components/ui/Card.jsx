@@ -1,8 +1,16 @@
+"use client"
+
 import React from "react"
+import { useTheme } from "../../contexts/ThemeContext"
 
 const Card = React.forwardRef(({ className = "", children, ...props }, ref) => {
+  const { colors } = useTheme()
   return (
-    <div ref={ref} className={`bg-white rounded-lg shadow-md border border-gray-200 ${className}`} {...props}>
+    <div
+      ref={ref}
+      className={`${colors.card} rounded-lg shadow-md border ${colors.border} transition-colors duration-300 ${className}`}
+      {...props}
+    >
       {children}
     </div>
   )
