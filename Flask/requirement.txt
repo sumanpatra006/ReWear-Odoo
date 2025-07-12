@@ -1,0 +1,5 @@
+Flask
+opencv-python==4.11.0.86
+numpy
+python-dotenv
+scikit-image
