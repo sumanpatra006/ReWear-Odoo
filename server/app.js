@@ -1,5 +1,6 @@
 import express from "express";
 import userRouter from "./routes/user.route.js";
+import adminRouter from "./routes/admin.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -26,6 +27,7 @@ app.use(cors({
 
 //Using routes
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/admins", adminRouter);
 
 app.get("/", (req, res) => {
   res.send("Nice Working");
