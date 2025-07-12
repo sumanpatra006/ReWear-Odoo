@@ -10,6 +10,7 @@ import BrowseItems from "./pages/BrowseItems";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import AdminPanel from "./pages/admin/AdminPanel";
+import UserProfile from "./pages/UserProfile";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import "./App.css";
 
@@ -31,6 +32,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <UserProfile />
                   </ProtectedRoute>
                 }
               />

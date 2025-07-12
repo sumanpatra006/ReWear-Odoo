@@ -1,27 +1,51 @@
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext, useState, useEffect } from "react";
+import { getUserProfile } from "../services/api";
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider")
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
-}
+  return context;
+};
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(false);
 
   useEffect(() => {
     // Check for existing session
-    const savedUser = localStorage.getItem("rewear_user")
+    const savedUser = localStorage.getItem("rewear_user");
     if (savedUser) {
-      setUser(JSON.parse(savedUser))
+      setUser(JSON.parse(savedUser));
     }
-    setLoading(false)
-  }, [])
+    setLoading(false);
+  }, []);
+
+  // Fetch user profile when user is available
+  useEffect(() => {
+    if (user && !userProfile) {
+      fetchUserProfile();
+    }
+  }, [user]);
+
+  const fetchUserProfile = async () => {
+    if (!user) return;
+
+    setProfileLoading(true);
+    try {
+      const response = await getUserProfile();
+      setUserProfile(response);
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
+    } finally {
+      setProfileLoading(false);
+    }
+  };
 
   const login = async (email, password) => {
     try {
@@ -32,14 +56,14 @@ export const AuthProvider = ({ children }) => {
         name: "John Doe",
         points: 150,
         isAdmin: email === "admin@rewear.com",
-      }
-      setUser(mockUser)
-      localStorage.setItem("rewear_user", JSON.stringify(mockUser))
-      return { success: true }
+      };
+      setUser(mockUser);
+      localStorage.setItem("rewear_user", JSON.stringify(mockUser));
+      return { success: true };
     } catch (error) {
-      return { success: false, error: error.message }
+      return { success: false, error: error.message };
     }
-  }
+  };
 
   const signup = async (userData) => {
     try {
@@ -49,27 +73,35 @@ export const AuthProvider = ({ children }) => {
         ...userData,
         points: 0,
         isAdmin: false,
-      }
-      setUser(newUser)
-      localStorage.setItem("rewear_user", JSON.stringify(newUser))
-      return { success: true }
+      };
+      setUser(newUser);
+      localStorage.setItem("rewear_user", JSON.stringify(newUser));
+      return { success: true };
     } catch (error) {
-      return { success: false, error: error.message }
+      return { success: false, error: error.message };
     }
-  }
+  };
 
   const logout = () => {
-    setUser(null)
-    localStorage.removeItem("rewear_user")
-  }
+    setUser(null);
+    setUserProfile(null);
+    localStorage.removeItem("rewear_user");
+  };
 
   const value = {
     user,
+    userProfile,
+    profileLoading,
+    fetchUserProfile,
     login,
     signup,
     logout,
-    loading,
-  }
+    loading: loading || profileLoading,
+  };
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>
-}
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+};

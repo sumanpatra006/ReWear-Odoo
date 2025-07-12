@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../../contexts/AuthContext"
-import { Menu, X, User, Plus, LogOut } from "lucide-react"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { Menu, X, User, Plus, LogOut, Settings } from "lucide-react";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, userProfile, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout()
-    navigate("/")
-  }
+    logout();
+    navigate("/");
+  };
 
   return (
     <nav className="bg-white shadow-lg border-b border-gray-200">
@@ -53,8 +53,17 @@ const Navbar = () => {
                   <User className="w-4 h-4" />
                   <span>Dashboard</span>
                 </Link>
+                <Link
+                  to="/profile"
+                  className="flex items-center space-x-1 text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                >
+                  <Settings className="w-4 h-4" />
+                  <span>Profile</span>
+                </Link>
                 <div className="flex items-center space-x-2 bg-purple-50 px-3 py-1 rounded-full">
-                  <span className="text-sm font-medium text-purple-700">{user.points} pts</span>
+                  <span className="text-sm font-medium text-purple-700">
+                    {userProfile?.profile?.points || user?.points || 0} pts
+                  </span>
                 </div>
                 <button
                   onClick={handleLogout}
@@ -84,8 +93,15 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-gray-700 hover:text-purple-600 p-2">
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-gray-700 hover:text-purple-600 p-2"
+            >
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -118,13 +134,20 @@ const Navbar = () => {
                   >
                     Dashboard
                   </Link>
+                  <Link
+                    to="/profile"
+                    className="block text-gray-700 hover:text-purple-600 hover:bg-purple-50 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Profile
+                  </Link>
                   <div className="px-3 py-2 text-sm text-purple-700 bg-purple-50 rounded-md mx-3">
-                    Points: {user.points}
+                    Points: {userProfile?.profile?.points || user?.points || 0}
                   </div>
                   <button
                     onClick={() => {
-                      handleLogout()
-                      setIsOpen(false)
+                      handleLogout();
+                      setIsOpen(false);
                     }}
                     className="block w-full text-left text-gray-700 hover:text-red-600 hover:bg-red-50 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                   >
@@ -154,7 +177,7 @@ const Navbar = () => {
         )}
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
