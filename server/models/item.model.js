@@ -22,6 +22,12 @@ const itemSchema = new mongoose.Schema({
     enum: ["pending", "approved", "swapped", "redeemed", "rejected"],
     default: "pending"
   },
+  points: {
+  type: Number,
+  required: true,
+  min: 1
+},
+
 
   pointsRequired: {             // For redeeming
     type: Number,

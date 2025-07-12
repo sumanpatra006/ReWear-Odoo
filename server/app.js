@@ -2,6 +2,7 @@ import express from "express";
 import userRouter from "./routes/user.route.js";
 import adminRouter from "./routes/admin.route.js";
 import itemRouter from "./routes/item.route.js";
+import notificationRouter from "./routes/notification.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -30,6 +31,7 @@ app.use(cors({
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/items", itemRouter);
+app.use("/api/v1/notifications", notificationRouter);
 
 app.get("/", (req, res) => {
   res.send("Nice Working");

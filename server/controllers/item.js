@@ -5,6 +5,7 @@ import { uploadImage } from "../utils/cloudinary.js";
 import axios from "axios";
 import fs from "fs";
 import FormData from "form-data";
+import { notifyUser } from "../utils/notifyUser.js";
 
 export const uploadItem = async (req, res) => {
   try {
@@ -15,8 +16,14 @@ export const uploadItem = async (req, res) => {
       gender,
       type,
       size,
-      tags
+      tags,
+      points
     } = req.body;
+
+
+if (!points || isNaN(points) || points <= 0) {
+  return res.status(400).json({ message: "Valid points value required" });
+}
 
     if (!req.file) {
       return res.status(400).json({ message: "Image is required" });
@@ -65,7 +72,8 @@ export const uploadItem = async (req, res) => {
       image: imageUrl,
       aiCondition,
       uploadedBy: req.user._id,
-      status: "pending"
+      status: "pending",
+      points: Number(points)
     });
 
     // Delete temp file
@@ -241,34 +249,51 @@ export const requestSwap = async (req, res) => {
 export const redeemItem = async (req, res) => {
   try {
     const itemId = req.params.id;
-    const userId = req.user._id;
+    const buyerId = req.user._id;
 
-    const item = await Item.findById(itemId);
-    const user = await User.findById(userId);
+    const item = await Item.findById(itemId).populate("uploadedBy");
 
-    if (!item) return res.status(404).json({ message: "Item not found" });
-    if (item.status !== "pending")
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+
+    if (item.status !== "approved") {
       return res.status(400).json({ message: "Item is not available for redeem" });
+    }
 
-    const cost = item.pointsRequired || 50;
+    const cost = item.points;
+    const buyer = await User.findById(buyerId);
+    const seller = item.uploadedBy; // Already populated
 
-    if (user.points < cost) {
+    if (!buyer || !seller) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (buyer.points < cost) {
       return res.status(400).json({ message: "Insufficient points to redeem this item" });
     }
 
-    // Deduct points
-    user.points -= cost;
-    await user.save();
+    // Transfer points
+    buyer.points -= cost;
+    seller.points += cost;
 
     // Update item status
-    item.status = "redeemed";
-    item.redeemedBy = userId;
-    await item.save();
+    item.status = "swapped";
+    item.redeemedBy = buyerId;
+    item.swapCount = (item.swapCount || 0) + 1;
+
+    // Save all
+    await Promise.all([buyer.save(), seller.save(), item.save()]);
+
+    // Notifications
+    await notifyUser(seller._id, `Your item "${item.title}" has been redeemed! You earned ${cost} points.`);
+    await notifyUser(buyerId, `You have successfully redeemed "${item.title}" for ${cost} points.`);
 
     res.status(200).json({
       message: "Item redeemed successfully",
-      pointsLeft: user.points,
-      itemId: item._id
+      itemId: item._id,
+      buyerPointsLeft: buyer.points,
+      sellerPoints: seller.points
     });
 
   } catch (error) {
