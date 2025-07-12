@@ -33,15 +33,15 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Dashboard />
-                    </ProtectedRoute>
+                     </ProtectedRoute>
                   }
                 />
                 <Route
                   path="/add-item"
                   element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                       <AddItem />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                   }
                 />
                 <Route

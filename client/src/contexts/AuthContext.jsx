@@ -1,75 +1,57 @@
-import { createContext, useContext, useState, useEffect } from "react"
-
-const AuthContext = createContext()
-
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider")
-  }
-  return context
-}
+import axios from "../utils/axios"; // <- custom axios instance
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session
-    const savedUser = localStorage.getItem("rewear_user")
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
-    }
-    setLoading(false)
-  }, [])
+    const fetchProfile = async () => {
+      try {
+        const { data } = await axios.get("/user/profile");
+        setUser(data.profile); // assuming data.profile structure
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const login = async (email, password) => {
     try {
-      // Simulate API call
-      const mockUser = {
-        id: "1",
-        email,
-        name: "John Doe",
-        points: 150,
-        isAdmin: email === "admin@rewear.com",
-      }
-      setUser(mockUser)
-      localStorage.setItem("rewear_user", JSON.stringify(mockUser))
-      return { success: true }
-    } catch (error) {
-      return { success: false, error: error.message }
+      await axios.post("/user/login", { email, password });
+      const { data } = await axios.get("/user/profile");
+      setUser(data.profile);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.response?.data?.message || err.message };
     }
-  }
+  };
 
-  const signup = async (userData) => {
+  const signup = async ({ name, email, password }) => {
     try {
-      // Simulate API call
-      const newUser = {
-        id: Date.now().toString(),
-        ...userData,
-        points: 0,
-        isAdmin: false,
-      }
-      setUser(newUser)
-      localStorage.setItem("rewear_user", JSON.stringify(newUser))
-      return { success: true }
-    } catch (error) {
-      return { success: false, error: error.message }
+      await axios.post("/user/new", { name, email, password, role: "user" });
+      const { data } = await axios.get("/user/profile");
+      setUser(data.profile);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.response?.data?.message || err.message };
     }
-  }
+  };
 
-  const logout = () => {
-    setUser(null)
-    localStorage.removeItem("rewear_user")
-  }
+  const logout = async () => {
+    try {
+      await axios.get("/user/logout");
+    } finally {
+      setUser(null);
+    }
+  };
 
-  const value = {
-    user,
-    login,
-    signup,
-    logout,
-    loading,
-  }
-
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>
-}
+  return (
+    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+};

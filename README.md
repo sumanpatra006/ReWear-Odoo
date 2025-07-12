@@ -34,6 +34,6 @@
 ## Team Details
 
 - **K Suman Patra** (Team Leader) - ksumanpatra06@gmail.con
-- **Subhankar Patra** - 
-- **Aditi Panda** - 
-- **Alpana Mohanty** - 
+- **Subhankar Patra** - patrasubhankar2205@gmail.com
+- **Aditi Panda** - pandaaditi37@gmail.com
+- **Alpana Mohanty** - alpana.mohanty01@gmail.com
