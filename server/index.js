@@ -1,23 +1,17 @@
-import express from 'express';
-import cors from 'cors';
-
-
-const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Middleware
-
-app.use(cors());
-app.use(express.json());
-
-// Basic route
-
-app.get('/', (req, res) => {
-    res.send('Server is running!');
+import dotenv from "dotenv";
+dotenv.config({
+    path: "./config/config.env",
 });
 
-// Start server
 
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+import { app } from "./app.js";
+import { connectDB } from "./config/db.js";
+
+//connecton to database
+
+connectDB();
+
+// Start server
+app.listen(process.env.PORT || 5000, () => {
+    console.log(`Server is running on port:${process.env.PORT} in ${process.env.NODE_ENV} mode `);
 });
