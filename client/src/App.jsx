@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import LandingPage from "./pages/LandingPage";
@@ -12,50 +13,54 @@ import Signup from "./pages/auth/Signup";
 import AdminPanel from "./pages/admin/AdminPanel";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import "./App.css";
+import AdminLogin from "./pages/admin/AdminLogin";
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-white text-black">
-          <Navbar />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/browse" element={<BrowseItems />} />
-              <Route path="/item/:id" element={<ItemDetail />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/add-item"
-                element={
-                  <ProtectedRoute>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <div className="min-h-screen transition-colors duration-300 w-full">
+            <Navbar />
+            <main className="flex-1 w-full">
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/browse" element={<BrowseItems />} />
+                <Route path="/item/:id" element={<ItemDetail />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/add-item"
+                  element={
+                    // <ProtectedRoute>
                     <AddItem />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <AdminPanel />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
-    </AuthProvider>
+                    // </ProtectedRoute>
+                  }
+                />
+                <Route path="/admin-login" element={<AdminLogin />} />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <AdminPanel />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

@@ -1,8 +1,12 @@
+"use client"
+
 import React from "react"
+import { useTheme } from "../../contexts/ThemeContext"
 
 const Label = React.forwardRef(({ className = "", children, ...props }, ref) => {
+  const { colors } = useTheme()
   return (
-    <label ref={ref} className={`block text-sm font-medium text-gray-700 mb-1 ${className}`} {...props}>
+    <label ref={ref} className={`block text-sm font-medium ${colors.text.primary} mb-1 ${className}`} {...props}>
       {children}
     </label>
   )
