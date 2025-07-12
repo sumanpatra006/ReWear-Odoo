@@ -1,4 +1,5 @@
 import {User} from "../models/user.model.js";
+import { Item } from "../models/item.model.js";
 import bcrypt from "bcrypt";
 import { sendCookie } from "../utils/features.js";
 
@@ -65,3 +66,74 @@ export const logout=(req,res)=>{
         message:"Logout Successfully"
     })
 }
+
+// controllers/adminController.js
+
+
+
+export const getAllItemsForModeration = async (req, res) => {
+  try {
+    const { status, category, gender, type } = req.query;
+
+    const filter = {};
+    if (status) filter.status = status;
+    if (category) filter.category = category;
+    if (gender) filter.gender = gender;
+    if (type) filter.type = type;
+
+    const items = await Item.find(filter).populate("uploadedBy", "name email");
+
+    res.status(200).json({
+      message: "Items fetched for moderation",
+      items
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+//Approving items
+export const approveItem = async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id);
+    if (!item) return res.status(404).json({ message: "Item not found" });
+
+    item.status = "approved";
+    await item.save();
+
+    // TODO: send notification (optional)
+    res.status(200).json({ message: "Item approved", item });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+//Rejecting items
+export const rejectItem = async (req, res) => {
+  try {
+    const item = await Item.findById(req.params.id);
+    if (!item) return res.status(404).json({ message: "Item not found" });
+
+    item.status = "rejected";
+    await item.save();
+
+    // TODO: send notification (optional)
+    res.status(200).json({ message: "Item rejected", item });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+//Delete inappropriate items
+export const deleteItem = async (req, res) => {
+  try {
+    const item = await Item.findByIdAndDelete(req.params.id);
+    if (!item) return res.status(404).json({ message: "Item not found" });
+
+    res.status(200).json({ message: "Item deleted by admin" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+
