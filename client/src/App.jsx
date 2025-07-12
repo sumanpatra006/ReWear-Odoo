@@ -1,18 +1,19 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import { AuthProvider } from "./contexts/AuthContext"
-import { ThemeProvider } from "./contexts/ThemeContext"
-import Navbar from "./components/layout/Navbar"
-import Footer from "./components/layout/Footer"
-import LandingPage from "./pages/LandingPage"
-import Dashboard from "./pages/Dashboard"
-import ItemDetail from "./pages/ItemDetail"
-import AddItem from "./pages/AddItem"
-import BrowseItems from "./pages/BrowseItems"
-import Login from "./pages/auth/Login"
-import Signup from "./pages/auth/Signup"
-import AdminPanel from "./pages/admin/AdminPanel"
-import ProtectedRoute from "./components/auth/ProtectedRoute"
-import "./App.css"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
+import LandingPage from "./pages/LandingPage";
+import Dashboard from "./pages/Dashboard";
+import ItemDetail from "./pages/ItemDetail";
+import AddItem from "./pages/AddItem";
+import BrowseItems from "./pages/BrowseItems";
+import Login from "./pages/auth/Login";
+import Signup from "./pages/auth/Signup";
+import AdminPanel from "./pages/admin/AdminPanel";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import "./App.css";
+import AdminLogin from "./pages/admin/AdminLogin";
 
 function App() {
   return (
@@ -33,17 +34,18 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Dashboard />
-                     </ProtectedRoute>
+                    </ProtectedRoute>
                   }
                 />
                 <Route
                   path="/add-item"
                   element={
                     // <ProtectedRoute>
-                      <AddItem />
+                    <AddItem />
                     // </ProtectedRoute>
                   }
                 />
+                <Route path="/admin-login" element={<AdminLogin />} />
                 <Route
                   path="/admin"
                   element={
@@ -59,7 +61,7 @@ function App() {
         </Router>
       </AuthProvider>
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;

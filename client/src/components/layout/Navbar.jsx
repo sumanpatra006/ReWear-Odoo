@@ -1,19 +1,19 @@
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../../contexts/AuthContext"
-import { useTheme } from "../../contexts/ThemeContext"
-import { Menu, X, User, Plus, LogOut, Moon, Sun } from "lucide-react"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { useTheme } from "../../contexts/ThemeContext";
+import { Menu, X, User, Plus, LogOut, Moon, Sun } from "lucide-react";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const { user, logout } = useAuth()
-  const { isDark, toggleTheme, colors } = useTheme()
-  const navigate = useNavigate()
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const { isDark, toggleTheme, colors } = useTheme();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout()
-    navigate("/")
-  }
+    logout();
+    navigate("/");
+  };
 
   return (
     <nav
@@ -29,7 +29,9 @@ const Navbar = () => {
               <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-700 rounded-lg flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-lg">R</span>
               </div>
-              <span className={`text-xl font-bold ${colors.text.primary}`}>ReWear</span>
+              <span className={`text-xl font-bold ${colors.text.primary}`}>
+                ReWear
+              </span>
             </Link>
           </div>
 
@@ -59,7 +61,9 @@ const Navbar = () => {
                   <span>Dashboard</span>
                 </Link>
                 <div className="flex items-center space-x-2 bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 px-3 py-1 rounded-full">
-                  <span className="text-sm font-medium text-purple-700 dark:text-purple-300">{user.points} pts</span>
+                  <span className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                    {user.points} pts
+                  </span>
                 </div>
                 <button
                   onClick={handleLogout}
@@ -83,6 +87,9 @@ const Navbar = () => {
                 >
                   Sign Up
                 </Link>
+                <Link to="/admin-login" className="text-sm text-purple-600">
+                  Admin
+                </Link>
               </div>
             )}
 
@@ -91,7 +98,11 @@ const Navbar = () => {
               onClick={toggleTheme}
               className={`p-2 rounded-lg ${colors.hover} ${colors.text.secondary} hover:text-purple-600 transition-all duration-200`}
             >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDark ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
             </button>
           </div>
 
@@ -101,10 +112,21 @@ const Navbar = () => {
               onClick={toggleTheme}
               className={`p-2 rounded-lg ${colors.hover} ${colors.text.secondary} hover:text-purple-600 transition-all duration-200`}
             >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDark ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
             </button>
-            <button onClick={() => setIsOpen(!isOpen)} className={`${colors.text.secondary} hover:text-purple-600 p-2`}>
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className={`${colors.text.secondary} hover:text-purple-600 p-2`}
+            >
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -112,7 +134,9 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         {isOpen && (
           <div className="md:hidden">
-            <div className={`px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t ${colors.border}`}>
+            <div
+              className={`px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t ${colors.border}`}
+            >
               <Link
                 to="/browse"
                 className={`block ${colors.text.secondary} hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 px-3 py-2 rounded-md text-base font-medium transition-all duration-200`}
@@ -142,8 +166,8 @@ const Navbar = () => {
                   </div>
                   <button
                     onClick={() => {
-                      handleLogout()
-                      setIsOpen(false)
+                      handleLogout();
+                      setIsOpen(false);
                     }}
                     className={`block w-full text-left ${colors.text.secondary} hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-2 rounded-md text-base font-medium transition-all duration-200`}
                   >
@@ -173,7 +197,7 @@ const Navbar = () => {
         )}
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

@@ -1,31 +1,31 @@
+// src/pages/auth/AdminLogin.jsx
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import Button  from "../../components/ui/Button";
-import Input   from "../../components/ui/Input";
-import Label   from "../../components/ui/Label";
+import Button from "../../components/ui/Button";
+import Input  from "../../components/ui/Input";
+import Label  from "../../components/ui/Label";
 import { Card, CardContent } from "../../components/ui/Card";
 
-const Login = () => {
-  const [form, setForm]   = useState({ email: "", password: "", admin: false });
+const AdminLogin = () => {
+  const { loginAdmin } = useAuth();
+  const navigate       = useNavigate();
+
+  const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState("");
-  const { login, loginAdmin } = useAuth();
-  const navigate = useNavigate();
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setErrorMsg("");
 
-    const { email, password, admin } = form;
-    const fn   = admin ? loginAdmin : login;
-    const res  = await fn(email.trim(), password.trim());
+    const res = await loginAdmin(form.email, form.password);
 
     if (res.success) {
-      navigate(admin ? "/admin" : "/dashboard");
+      navigate("/admin");     // protected admin panel route
     } else {
-      setError(res.error || "Login failed");
+      setErrorMsg(res.error || "Login failed");
     }
     setLoading(false);
   };
@@ -33,18 +33,16 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">R</span>
+              <span className="text-white font-bold text-xl">A</span>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Welcome back</h2>
-          <p className="text-gray-600">Sign in to your ReWear account</p>
+          <h2 className="text-3xl font-bold text-gray-900">Admin Sign‑In</h2>
+          <p className="text-gray-600">ReWear moderation portal</p>
         </div>
 
-        {/* Card */}
         <Card>
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -55,11 +53,10 @@ const Login = () => {
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  placeholder="you@example.com"
+                  placeholder="admin@rewear.com"
                   required
                 />
               </div>
-
               <div>
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -72,7 +69,7 @@ const Login = () => {
                 />
               </div>
 
-              {error && <p className="text-red-600 text-sm">{error}</p>}
+              {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}
 
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Signing in…" : "Sign In"}
@@ -81,9 +78,9 @@ const Login = () => {
 
             <div className="mt-6 text-center">
               <p className="text-gray-600">
-                Don't have an account?{" "}
-                <Link to="/signup" className="text-purple-600 hover:text-purple-700 font-medium">
-                  Sign up
+                Regular user?{" "}
+                <Link to="/login" className="text-purple-600 hover:text-purple-700 font-medium">
+                  Sign in here
                 </Link>
               </p>
             </div>
@@ -94,4 +91,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;

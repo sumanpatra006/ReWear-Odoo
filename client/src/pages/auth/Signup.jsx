@@ -1,44 +1,45 @@
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../../contexts/AuthContext"
-import Button from "../../components/ui/Button"
-import Input from "../../components/ui/Input"
-import Label from "../../components/ui/Label"
-import { Card, CardContent } from "../../components/ui/Card"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import Button  from "../../components/ui/Button";
+import Input   from "../../components/ui/Input";
+import Label   from "../../components/ui/Label";
+import { Card, CardContent } from "../../components/ui/Card";
 
 const Signup = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  })
-  const [loading, setLoading] = useState(false)
-  const { signup } = useAuth()
-  const navigate = useNavigate()
+  const [form, setForm]     = useState({ name: "", email: "", password: "", confirm: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
+  const { signup } = useAuth();
+  const navigate   = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setError("");
 
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match")
-      return
+    if (form.password !== form.confirm) {
+      return setError("Passwords do not match");
     }
 
-    setLoading(true)
+    setLoading(true);
+    const res = await signup({
+      name:     form.name.trim(),
+      email:    form.email.trim(),
+      password: form.password.trim(),
+    });
 
-    const result = await signup(formData)
-
-    if (result.success) {
-      navigate("/dashboard")
+    if (res.success) {
+      navigate("/dashboard");
+    } else {
+      setError(res.error || "Signup failed");
     }
-
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full">
+        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
@@ -49,6 +50,7 @@ const Signup = () => {
           <p className="text-gray-600">Start your sustainable fashion journey</p>
         </div>
 
+        {/* Card */}
         <Card>
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -56,9 +58,9 @@ const Signup = () => {
                 <Label htmlFor="name">Full Name</Label>
                 <Input
                   id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Enter your full name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  placeholder="Jane Smith"
                   required
                 />
               </div>
@@ -68,9 +70,9 @@ const Signup = () => {
                 <Input
                   id="email"
                   type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="Enter your email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="you@example.com"
                   required
                 />
               </div>
@@ -80,27 +82,29 @@ const Signup = () => {
                 <Input
                   id="password"
                   type="password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
                   placeholder="Create a password"
                   required
                 />
               </div>
 
               <div>
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirm">Confirm Password</Label>
                 <Input
-                  id="confirmPassword"
+                  id="confirm"
                   type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  placeholder="Confirm your password"
+                  value={form.confirm}
+                  onChange={(e) => setForm({ ...form, confirm: e.target.value })}
+                  placeholder="Repeat your password"
                   required
                 />
               </div>
 
+              {error && <p className="text-red-600 text-sm">{error}</p>}
+
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Creating account..." : "Create Account"}
+                {loading ? "Creating account…" : "Create Account"}
               </Button>
             </form>
 
@@ -116,7 +120,7 @@ const Signup = () => {
         </Card>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Signup
+export default Signup;
